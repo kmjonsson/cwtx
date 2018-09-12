@@ -14,7 +14,7 @@ export default {
   props: {
     text: String,
     width: String,
-    nouc: { type: String, default: true }
+    nouc: { type: Boolean, default: true }
   },
   computed: {
           border_top() {
