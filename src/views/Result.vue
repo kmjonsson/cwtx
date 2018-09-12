@@ -1,11 +1,11 @@
 <template>
   <div class="cwt">
-    <Ditdah text="98" width="50px"/>
-    <Space text="2" width="50px"/>
-    <Ditdah text="3" width="150px"/>
-    <Space text="2" width="50px"/>
-    <Ditdah text="3" width="150px"/>
-    <Space text="2" width="150px"/>
+    <Ditdah text="100%" width="50px"/>
+    <Space text="100%" width="50px"/>
+    <Ditdah text="78%" width="150px"/>
+    <Space text="100%" width="50px"/>
+    <Ditdah text="100%" width="150px"/>
+    <Space text="100%" width="150px"/>
     <Ditdah text="3" width="150px"/>
   </div>
 </template>
