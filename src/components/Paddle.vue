@@ -151,7 +151,6 @@ export default {
                 // Always end sine @ 0 for better sound.
                 return Math.round(dit * this.freq) / this.freq;
         }
-
   },
   beforeDestroy() {
         // Release mouse events
