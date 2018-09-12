@@ -1,6 +1,5 @@
 <template>
   <div>
-        Hej
         {{dit}}/{{dah}}
         <div v-html="output"/>
   </div>
