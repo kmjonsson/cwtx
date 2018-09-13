@@ -1,8 +1,5 @@
 <template>
-  <div>
-        {{dit}}/{{dah}}
-        <div v-html="output"/>
-  </div>
+  <div><div v-html="output"/></div>
 </template>
 
 <script>
@@ -19,6 +16,7 @@ export default {
           play_dah: true,
           lastt: 0,
           output: "",
+          start_time: 0,
         };
   },
   props: {
@@ -38,24 +36,33 @@ export default {
                 this.m_event();
         },
         m_event() {
-                console.log(this);
+                //console.log(this);
                 this.timer = undefined;
                 let nowt = Date.now() / 1000;
-                if(this.dit || this.dah) {
+                if(this.start_time == 0) {
+                        this.start_time = nowt;
+                }
+                /*if(this.dit || this.dah) {
                         if(nowt-this.lastt > this.dit_len()*7) { this.output += "<br/>"; }
                         if(nowt-this.lastt > this.dit_len()*3) { this.output += " "; }
-                }
+                }*/
                 if((this.dit && this.dah) || this.play_next) {
                         if(this.play_dah) {
-                                this.output += "-";
-                                this.play(false);
                                 this.timer = setTimeout(this.m_event,this.dit_len()*4*1000);
+                  //              this.output += "-";
+                                this.$emit('on',nowt-this.start_time);
+                                this.$emit('off',nowt-this.start_time+this.dit_len()*3);
+                                this.play(false);
+                                
                                 this.lastt = nowt+this.dit_len()*3;
                         } else {
-                                //$('#didah').append(".");
-                                this.output += ".";
-                                this.play(true);
                                 this.timer = setTimeout(this.m_event,this.dit_len()*2*1000);
+                                //$('#didah').append(".");
+                    //            this.output += ".";
+                                this.$emit('on',nowt-this.start_time);
+                                this.$emit('off',nowt-this.start_time+this.dit_len());
+                                this.play(true);
+                                
                                 this.lastt = nowt+this.dit_len();
                         }
                         this.play_dah = !this.play_dah;
@@ -65,20 +72,22 @@ export default {
                 }
                 this.play_next = false
                 if(this.dah) {
-                        //$('#didah').append("-");
-                        this.output += "-";
-                        this.play(false);
                         this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*4*1000);
+                        this.output += "-";
+                        this.$emit('on',nowt-this.start_time);
+                        this.$emit('off',nowt-this.start_time+this.dit_len()*3);
+                        this.play(false);
                         this.play_dah = false;
                         this.lastt = nowt+this.dit_len()*3;
                         return;
                 }
                 if(this.dit) {
-                        //$('#didah').append(".");
+                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*2*1000);
                         this.output += ".";
                         this.play(true);
-                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*2*1000);
                         this.play_dah = true;
+                        this.$emit('on',nowt-this.start_time);
+                        this.$emit('off',nowt-this.start_time+this.dit_len());
                         this.lastt = nowt+this.dit_len();
                         return;
                 }
