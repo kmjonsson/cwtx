@@ -1,11 +1,18 @@
 <template>
   <div class="record">
-    <div @click="paddle = !paddle">{{input_device}}</div>
+    <h1>{{text}}</h1>
+    <h2 @click="paddle = !paddle">{{input_device}}</h2>
     <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
     <div class="cwt">
       <template v-for="e in events">
-        <Ditdah :key="e.id" :width="e.len + 'px'" :nouc="e.len < 30 && e.space" :color="e.color"/>      
+        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color"/>      
+      </template>
+    </div>
+    <h2>Facit</h2>
+    <div class="cwt">
+      <template v-for="e in fevents">
+        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color"/>      
       </template>
     </div>
   </div>
@@ -16,6 +23,8 @@
 import Paddle from '@/components/Paddle.vue'
 import Ditdah from '@/components/Ditdah.vue'
 import Straight from '@/components/Straight.vue'
+import Utils from '@/code/utils.js'
+import Morse from '@/code/morse.js'
 
 export default {
   name: 'record',
@@ -26,8 +35,10 @@ export default {
   },
   data () {
     return {
+      text: "CQ",
       paddle: true,
       events: [],
+      fevents: [],
       on_at: -1,
       off_at: -1,
       wpm: 15,
@@ -37,6 +48,14 @@ export default {
   },
   created () {
     this.dit_len = this.calc_dit_len()
+    this.fevents = Morse.morse2events(Morse.text2morse(this.text),this.wpm);
+    for(let e of this.fevents) {
+      e.width = e.len*10;
+      e.color = 'green';
+      if(e.space) {
+        e.color = 'white';
+      }
+    }
   },
   computed: {
     input_device() {
@@ -50,34 +69,34 @@ export default {
   methods: {
     on(t) {
       if(this.off_at != -1) {
-        let l = (t-this.off_at)/this.dit_len;
+        let len = (t-this.off_at)/this.dit_len;
         this.events.push({
           space: true,
           id: t,
           color: 'white',
-          len: parseInt(l*10),          
+          len,
+          width: parseInt(len*10),          
         });
       }
       this.on_at = t;
     },
     off(t) {
-      let l = (t-this.on_at)/this.dit_len;
+      let len = (t-this.on_at)/this.dit_len;
       let color = 'green';
-      if(l > 3.1) {
+      if(len > 3.1) {
         color = 'red';
       }
       this.events.push({
         space: false,
         id: t,
         color,
-        len: parseInt(l*10),
+        len,
+        width: parseInt(len*10),
       });
       this.off_at = t;
     },
     calc_dit_len() {
-      let dit = 60 / (this.wpm * 50);      // PARIS
-      // Always end sine @ 0 for better sound.
-      return Math.round(dit * this.freq) / this.freq;
+      return Utils.calc_dit_len(this.wpm,this.freq);
     }
   }
 }
@@ -86,6 +105,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .cwt {
-        height: 150px;
+        height: 15px;
 }
 </style>
