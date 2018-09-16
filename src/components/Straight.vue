@@ -40,7 +40,7 @@ export default {
                 this.output = o;
         },
         mouseDown(e) {                
-                if( e.button == 1 || e.button == 2 ) { 
+                if( e.button == 1 || e.button == 1 ) { 
                         this.down();
                         e.preventDefault();
                         return false; 
@@ -48,7 +48,7 @@ export default {
                 return true;   
         },
         mouseUp(e) {
-                if( e.button == 1 || e.button == 2 ) { 
+                if( e.button == 1 || e.button == 1 ) { 
                         this.up();
                         e.preventDefault()
                         return false; 

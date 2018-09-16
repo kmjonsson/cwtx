@@ -4,17 +4,21 @@
     <h2 @click="paddle = !paddle">{{input_device}}</h2>
     <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
+    <!--
     <div class="cwt">
       <template v-for="e in events">
         <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color"/>      
       </template>
     </div>
-    <h2>Facit</h2>
-    <div class="cwt">
-      <template v-for="e in fevents">
-        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color"/>      
+    <h2 @click="facit = !facit">Facit {{facit}}</h2>
+    -->
+    <div v-if="facit" class="cwt">
+      <template v-for="e in facit_events">
+        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color" :space="e.space" :noborder="e.color == 'green'"/>      
       </template>
     </div>
+
+    <h2 @click="events=[]">Reset</h2>
   </div>
 </template>
 
@@ -43,7 +47,8 @@ export default {
       off_at: -1,
       wpm: 15,
       freq: 550,
-      dit_len: 0
+      dit_len: 0,
+      facit: true,
     }
   },
   created () {
@@ -64,6 +69,13 @@ export default {
       } else {
         return "Straight";
       }
+    },
+    facit_events() {
+      let ev = Morse.compare(this.fevents,this.events);
+      for(let e of ev) {
+        e.width = e.len*10;
+      }
+      return ev;
     }
   },
   methods: {

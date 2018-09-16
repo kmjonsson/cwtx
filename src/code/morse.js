@@ -124,8 +124,51 @@ class Morse {
                 });
             }
         }
+        events.pop();
         console.log(events);
         return events;
+    }
+
+    // TODO: Calc score
+    static compare(m1,m2) {
+        let result = [];
+        for(let i in m1) {
+            if(m2[i] === undefined) {
+                break;
+                result.push({
+                    id: m1[i].id,
+                    space: m1[i].space,
+                    color: 'red',
+                    len: m1[i].len,
+                });
+                continue;    
+            }
+            if(Math.abs(m1[i].len-m2[i].len) < 0.3) {
+                result.push({
+                    id: m1[i].id,
+                    space: m1[i].space,
+                    color: 'green',
+                    len: m2[i].len,
+                });
+                continue;
+            }
+            if(Math.abs(m1[i].len-m2[i].len) < 0.7) {
+                result.push({
+                    id: m1[i].id,
+                    space: m1[i].space,
+                    color: 'orange',
+                    len: m2[i].len,
+                });
+                continue;
+            }
+            result.push({
+                id: m1[i].id,
+                space: m1[i].space,
+                color: 'red',
+                len: m2[i].len,
+            });
+        }
+        return result;
     }
 }
 
