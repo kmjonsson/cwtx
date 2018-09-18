@@ -1,13 +1,12 @@
 <template>
   <div class="record">
     
-    <h2 @click="paddle = !paddle">Input device: {{input_device}}</h2>
+    <h2>Input device: {{input_device}}</h2>
     <h2 @click="reset()">Restart</h2>
 
     <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
-    
-    
+        
     <h1>{{text}}</h1>
     <div class="cwt">
       <template v-for="e in facit_events">
@@ -15,9 +14,10 @@
       </template>
     </div>
 
-    <div>Score: {{score}}</div>
+    <h2>Score: {{score}}</h2>
 
-    <h2 @click="facit = !facit">Facit {{facit}}</h2>
+    <h1 v-if="facit" @click="facit = false">Hide facit</h1>
+    <h1 v-if="!facit" @click="facit = true">Show facit</h1>
     <div v-if="facit" class="cwt">
       <template v-for="e in fevents">
         <Ditdah :key="e.id" :width="e.width + 'px'" :color="e.color"/>
@@ -47,16 +47,12 @@ export default {
   },
   data () {
     return {
-      text: "CQ SA2BRJ",
-      paddle: true,
       events: [],
       fevents: [],
       on_at: -1,
       off_at: -1,
-      wpm: 15,
-      freq: 550,
       dit_len: 0,
-      facit: true,
+      facit: false,
       xev: [],
     }
   },
@@ -72,6 +68,22 @@ export default {
     }
   },
   computed: {
+    wpm() {
+      return this.$store.state.wpm;
+    },
+    freq() {
+      return this.$store.state.freq;
+    },
+    paddle() {
+      if(this.$store.state.input_device == 'paddle') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    text() {
+      return this.$store.state.text;
+    },
     input_device() {
       if(this.paddle) {
         return "Paddle";

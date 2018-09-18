@@ -18,6 +18,7 @@ export default {
           timer: undefined,
           play_dah: true,
           start_time: 0,
+          last_time: 0,
         };
   },
   props: {
@@ -39,24 +40,34 @@ export default {
                         if(this.dit && this.dah) { this.play_next=true; }
                         return;
                 }
-                this.m_event();
+                this.event(false);
         },
         m_event() {
+                return this.event(true);
+        },
+        event(round) {
                 this.timer = undefined;
-                let nowt = performance.now() / 1000;
                 if(this.start_time == 0) {
-                        this.start_time = nowt;
-                }             
+                        this.start_time = performance.now()/1000;
+                }
+                let nowt = performance.now()/1000-this.start_time;
+                if(round) {
+                        //      nowt = parseInt(nowt / this.dit_len())*this.dit_len();
+                        console.log((nowt-this.last_time)); // / this.dit_len());
+                } else {
+                        this.last_time = nowt;
+                }
+                
                 if((this.dit && this.dah) || this.play_next) {
                         if(this.play_dah) {
-                                this.timer = setTimeout(this.m_event,this.dit_len()*4*1000);
-                                this.$emit('on',nowt-this.start_time);
-                                this.$emit('off',nowt-this.start_time+this.dit_len()*3);
+                                this.timer = setTimeout(this.m_event,this.dit_len()*4*this.comp);
+                                this.$emit('on',nowt);
+                                this.$emit('off',nowt+this.dit_len()*3);
                                 this.play(false);                                                                
                         } else {
-                                this.timer = setTimeout(this.m_event,this.dit_len()*2*1000);
-                                this.$emit('on',nowt-this.start_time);
-                                this.$emit('off',nowt-this.start_time+this.dit_len());
+                                this.timer = setTimeout(this.m_event,this.dit_len()*2*this.comp);
+                                this.$emit('on',nowt);
+                                this.$emit('off',nowt+this.dit_len());
                                 this.play(true);                                
                         }
                         this.play_dah = !this.play_dah;
@@ -66,17 +77,18 @@ export default {
                 }
                 this.play_next = false
                 if(this.dah) {
-                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*4*1000);
-                        this.$emit('on',nowt-this.start_time);
-                        this.$emit('off',nowt-this.start_time+this.dit_len()*3);
+                        this.last_time = nowt;
+                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*4*this.comp);
+                        this.$emit('on',nowt);
+                        this.$emit('off',nowt+this.dit_len()*3);
                         this.play(false);
                         this.play_dah = false;
                         return;
                 }
                 if(this.dit) {
-                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*2*1000);
-                        this.$emit('on',nowt-this.start_time);
-                        this.$emit('off',nowt-this.start_time+this.dit_len());
+                        this.timer = setTimeout(this.m_event.bind(this),this.dit_len()*2*this.comp);
+                        this.$emit('on',nowt);
+                        this.$emit('off',nowt+this.dit_len());
                         this.play(true);
                         this.play_dah = true;
                         return;
