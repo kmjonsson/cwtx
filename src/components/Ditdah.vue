@@ -1,5 +1,5 @@
 <template>
-  <div class="cwt_el" v-bind:style="{ width: width }">    
+  <div class="cwt_el" v-bind:style="{ width: width }" :title="desc">
     <div class="cwt_mid" v-bind:style="{ width: width, 'border-bottom': border_bottom, 'background-color': bg_color, border: border }"></div>
   </div>
 </template>
@@ -13,6 +13,7 @@ export default {
     space: { type: Boolean, default: false },
     noborder: { type: Boolean, default: true },
     color: { type: String, default: 'green' },
+    desc: { type: String, default: ""},
   },
   computed: {
           bg_color() {

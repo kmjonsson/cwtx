@@ -1,24 +1,30 @@
 <template>
   <div class="record">
-    <h1>{{text}}</h1>
-    <h2 @click="paddle = !paddle">{{input_device}}</h2>
+    
+    <h2 @click="paddle = !paddle">Input device: {{input_device}}</h2>
+    <h2 @click="reset()">Restart</h2>
+
     <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
-    <!--
+    
+    
+    <h1>{{text}}</h1>
     <div class="cwt">
-      <template v-for="e in events">
-        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color"/>      
-      </template>
-    </div>
-    <h2 @click="facit = !facit">Facit {{facit}}</h2>
-    -->
-    <div v-if="facit" class="cwt">
       <template v-for="e in facit_events">
-        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color" :space="e.space" :noborder="e.color == 'green'"/>      
+        <Ditdah :key="e.id" :width="e.width + 'px'" :nouc="e.len < 3 && e.space" :color="e.color" :space="e.space" :noborder="e.diff <= 1" :desc="e.desc"/>      
       </template>
     </div>
 
-    <h2 @click="events=[]">Reset</h2>
+    <div>Score: {{score}}</div>
+
+    <h2 @click="facit = !facit">Facit {{facit}}</h2>
+    <div v-if="facit" class="cwt">
+      <template v-for="e in fevents">
+        <Ditdah :key="e.id" :width="e.width + 'px'" :color="e.color"/>
+      </template>
+    </div>
+    
+
   </div>
 </template>
 
@@ -30,6 +36,8 @@ import Straight from '@/components/Straight.vue'
 import Utils from '@/code/utils.js'
 import Morse from '@/code/morse.js'
 
+import { EventBus } from '@/code/eventbus.js'
+
 export default {
   name: 'record',
   components: {
@@ -39,7 +47,7 @@ export default {
   },
   data () {
     return {
-      text: "CQ",
+      text: "CQ SA2BRJ",
       paddle: true,
       events: [],
       fevents: [],
@@ -49,11 +57,12 @@ export default {
       freq: 550,
       dit_len: 0,
       facit: true,
+      xev: [],
     }
   },
   created () {
     this.dit_len = this.calc_dit_len()
-    this.fevents = Morse.morse2events(Morse.text2morse(this.text),this.wpm);
+    this.fevents = Morse.morse2events(Morse.text2morse(this.text),this.wpm);    
     for(let e of this.fevents) {
       e.width = e.len*10;
       e.color = 'green';
@@ -75,10 +84,29 @@ export default {
       for(let e of ev) {
         e.width = e.len*10;
       }
+      this.xev = ev;
       return ev;
+    },
+    score() {
+      let t=0;
+      let f=0;
+      for(let e of this.xev) {
+        f+=e.diff*e.flen/100;
+        t+=e.flen;
+      }
+      if(t == 0) {
+        return "N/A";
+      }
+      return parseInt(100-(t-f)/t*100);
     }
   },
   methods: {
+    reset() {
+      this.events=[];
+      this.on_at = -1;
+      this.off_at = -1;
+      EventBus.$emit('reset');
+    },
     on(t) {
       if(this.off_at != -1) {
         let len = (t-this.off_at)/this.dit_len;

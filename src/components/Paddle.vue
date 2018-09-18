@@ -3,6 +3,9 @@
 </template>
 
 <script>
+
+import { EventBus } from '@/code/eventbus.js'
+
 export default {
   name: 'paddle',
   data () {
@@ -23,7 +26,13 @@ export default {
   },
   computed: {
   },
+  created() {        
+        EventBus.$on('reset', this.reset);
+  },
   methods: {
+        reset() {
+                this.start_time = 0;
+        },
         down() {                
                 // I'm playing :-)
                 if(this.timer !== undefined) {
@@ -34,7 +43,7 @@ export default {
         },
         m_event() {
                 this.timer = undefined;
-                let nowt = Date.now() / 1000;
+                let nowt = performance.now() / 1000;
                 if(this.start_time == 0) {
                         this.start_time = nowt;
                 }             

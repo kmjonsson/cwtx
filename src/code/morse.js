@@ -60,11 +60,9 @@ import Utils from '@/code/utils.js'
 
 class Morse {
     static text2morse(text) {
-        console.log(text);
         let chars = text.split("");
         let result = "";
         for(let ch of chars) {
-            console.log(ch);
             if(cw_map[ch] !== undefined) {
                 result += cw_map[ch] + "@";
             }
@@ -73,10 +71,6 @@ class Morse {
     }
 
     static morse2events(morse,wpm) {
-        console.log(morse);
-        let dit_len = Utils.calc_dit_len(wpm,10000);
-        dit_len = 1;
-        console.log("Ditlen: " + dit_len);
         let codes = morse.split("");
         let events = [];
         let id = 0;
@@ -86,12 +80,12 @@ class Morse {
                     id: id++,
                     space: false,
                     text: "-",
-                    len: dit_len*3,
+                    len: 3
                 });
                 events.push({
                     id: id++,
                     space: true,
-                    len: dit_len,
+                    len: 1
                 });
             }
             if(code == '.') {
@@ -99,12 +93,12 @@ class Morse {
                     id: id++,
                     space: false,
                     text: ".",
-                    len: dit_len,
+                    len: 1
                 });
                 events.push({
                     id: id++,
                     space: true,
-                    len: dit_len,
+                    len: 1
                 });
             }
             if(code == '@') {
@@ -112,7 +106,7 @@ class Morse {
                 events.push({
                     id: id++,
                     space: true,
-                    len: dit_len*3,
+                    len: 3
                 });
             }
             if(code == ' ') {
@@ -120,7 +114,7 @@ class Morse {
                 events.push({
                     id: id++,
                     space: true,
-                    len: dit_len*7,
+                    len: 7
                 });
             }
         }
@@ -140,35 +134,42 @@ class Morse {
                     space: m1[i].space,
                     color: 'red',
                     len: m1[i].len,
-                });
-                continue;    
-            }
-            if(Math.abs(m1[i].len-m2[i].len) < 0.3) {
-                result.push({
-                    id: m1[i].id,
-                    space: m1[i].space,
-                    color: 'green',
-                    len: m2[i].len,
+                    diff: 100,
                 });
                 continue;
             }
-            if(Math.abs(m1[i].len-m2[i].len) < 0.7) {
-                result.push({
-                    id: m1[i].id,
-                    space: m1[i].space,
-                    color: 'orange',
-                    len: m2[i].len,
-                });
-                continue;
+            let diff = parseInt(Math.abs(m1[i].len-m2[i].len)/m1[i].len*100);
+            // You can't be more then 100% off ;-)
+            if(diff > 100) {
+                diff = 100;                
+            }
+            // Less the 10% is nothing
+            if(diff < 10) {
+                diff = 0;
+            }
+            let desc = "";
+            if(diff >= 10) {
+                desc = "off by " + diff + "%";
+            }
+            if(diff == 100) {
+                desc = "off by >" + diff + "%";
             }
             result.push({
                 id: m1[i].id,
                 space: m1[i].space,
-                color: 'red',
+                color: this.p2hsl(diff),
                 len: m2[i].len,
+                flen: m1[i].len,
+                diff,
+                desc,
             });
         }
         return result;
+    }
+
+    static p2hsl(n) {
+        let hue = (100-n) * 1.2;
+        return "hsl(" + hue + ",100%,50%)"
     }
 }
 

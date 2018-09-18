@@ -3,6 +3,9 @@
 </template>
 
 <script>
+
+import EventBus from '@/code/eventbus.js'
+
 export default {
   name: 'straight',
   data () {
@@ -11,22 +14,28 @@ export default {
           AudioContext: window.AudioContext || window.webkitAudioContext,
           start_time: 0,
           output: undefined,
+          is_down: false,
         };
   },
   props: {
         freq: { type: Number, default: 550 },
   },
   methods: {
-        down() {
-                let nowt = Date.now() / 1000;                
+        down() {                
+                let nowt = performance.now() / 1000;                
+                if(this.is_down) { return; }
+                this.is_down = true;
                 if(this.start_time == 0) {
                         this.start_time = nowt;
                 }
                 this.play();
                 this.$emit('on',nowt-this.start_time);
+                
         },
         up() {
-                let nowt = Date.now() / 1000;
+                let nowt = performance.now() / 1000;
+                if(!this.is_down) { return; }
+                this.is_down = false;
                 this.output.stop();
                 this.$emit('off',nowt-this.start_time);
         },
@@ -40,7 +49,7 @@ export default {
                 this.output = o;
         },
         mouseDown(e) {                
-                if( e.button == 1 || e.button == 1 ) { 
+                if( e.button == 1 || e.button == 2 ) { 
                         this.down();
                         e.preventDefault();
                         return false; 
@@ -48,7 +57,7 @@ export default {
                 return true;   
         },
         mouseUp(e) {
-                if( e.button == 1 || e.button == 1 ) { 
+                if( e.button == 1 || e.button == 2 ) { 
                         this.up();
                         e.preventDefault()
                         return false; 
