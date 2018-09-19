@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    input_device: 'paddle',
+    input_device: 'paddleB',
     text: "CQ CQ CQ",
     wpm: 15,
     freq: 550,
@@ -22,8 +22,11 @@ export default new Vuex.Store({
     text(state,t) {
       state.text = t;
     },
-    paddle(state) {
-      state.input_device = 'paddle';
+    paddleA(state) {
+      state.input_device = 'paddleA';
+    },
+    paddleB(state) {
+      state.input_device = 'paddleB';
     },
     straight(state) {
       state.input_device = 'straight';
@@ -62,8 +65,12 @@ export default new Vuex.Store({
       commit('text',t);
       dispatch('save');
     },
-    paddle({ commit, dispatch }) {
-      commit('paddle');
+    paddleA({ commit, dispatch }) {
+      commit('paddleA');
+      dispatch('save');
+    },
+    paddleB({ commit, dispatch }) {
+      commit('paddleB');
       dispatch('save');
     },
     straight({ commit, dispatch }) {

@@ -2,7 +2,8 @@
   <div class="record">
     
     <h1>Input device</h1>
-    <h2 v-bind:style="{ 'background-color': paddle_color }" @click="paddle()">Paddle</h2>
+    <h2 v-bind:style="{ 'background-color': paddle_colorA }" @click="paddle('A')">Paddle Mode A</h2>
+    <h2 v-bind:style="{ 'background-color': paddle_colorB }" @click="paddle('B')">Paddle Mode B</h2>
     <h2 v-bind:style="{ 'background-color': straight_color }" @click="straight()">Straight</h2>
 
     <h1>Message</h1>
@@ -29,8 +30,14 @@ export default {
   created () {
   },
   computed: {
-    paddle_color() {
-      if(this.$store.state.input_device == 'paddle') {
+    paddle_colorA() {
+      if(this.$store.state.input_device == 'paddleA') {
+        return 'green';
+      }
+      return 'white';
+    },
+    paddle_colorB() {
+      if(this.$store.state.input_device == 'paddleB') {
         return 'green';
       }
       return 'white';
@@ -70,8 +77,8 @@ export default {
     }
   },
   methods: {
-    paddle() {
-      this.$store.dispatch('paddle');
+    paddle(mode) {
+      this.$store.dispatch('paddle'+mode);
     },
     straight() {
       this.$store.dispatch('straight');

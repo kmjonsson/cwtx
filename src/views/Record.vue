@@ -73,11 +73,21 @@ export default {
       return this.$store.state.freq;
     },
     paddle() {
-      if(this.$store.state.input_device == 'paddle') {
+      if(this.$store.state.input_device == 'paddleA' ||
+         this.$store.state.input_device == 'paddleB') {
         return true;
       } else {
         return false;
       }
+    },
+    mode() {
+      if(this.$store.state.input_device == 'paddleA') {
+        return 'A';
+      }
+      if(this.$store.state.input_device == 'paddleB') {
+        return 'B';
+      }
+      return ""
     },
     text() {
       return this.$store.state.text.toUpperCase();

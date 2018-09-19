@@ -24,6 +24,7 @@ export default {
   props: {
         wpm: { type: Number },
         freq: { type: Number, default: 550 },
+        mode: { type: String, default: "B" },
   },
   computed: {
   },
@@ -63,7 +64,7 @@ export default {
                 if(nowt == 0) {
                         nowt = performance.now()/1000-this.start_time;
                 }
-                if((this.dit && this.dah) || this.play_next) {
+                if((this.dit && this.dah) || (this.play_next && this.mode == 'B')) {
                         if(this.play_dah) {                                
                                 this.kick_timer(nowt+this.dit_len()*4);
                                 this.$emit('on',nowt);
