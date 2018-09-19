@@ -33,8 +33,8 @@ export default {
         up() {
                 let nowt = performance.now() / 1000;
                 if(!this.is_down) { return; }
-                this.is_down = false;
-                this.output.stop();
+                this.is_down = false;                
+                this.output.stop(this.ctx.currentTime+0.5);
                 this.$emit('off',nowt-this.start_time);
         },
         play() {                
