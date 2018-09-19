@@ -138,17 +138,19 @@ class Morse {
                 });
                 continue;
             }
-            let diff = parseInt(Math.abs(m1[i].len-m2[i].len)/m1[i].len*100);
+            let rdiff = m1[i].len-m2[i].len;
+            let rdiff2 = Math.abs((m1[i].len-m2[i].len)*100)/m1[i].len;
+            let diff = Math.round(Math.abs(m1[i].len-m2[i].len)/m1[i].len*100);
             // You can't be more then 100% off ;-)
             if(diff > 100) {
                 diff = 100;                
             }
-            // Less the 10% is nothing
-            if(diff < 10) {
+            // Less the 1% is nothing
+            if(diff < 3) {
                 diff = 0;
             }
             let desc = "";
-            if(diff >= 10) {
+            if(diff >= 3) {
                 desc = "off by " + diff + "%";
             }
             if(diff == 100) {
@@ -162,6 +164,8 @@ class Morse {
                 flen: m1[i].len,
                 diff,
                 desc,
+                rdiff,
+                rdiff2,
             });
         }
         return result;

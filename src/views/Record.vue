@@ -1,8 +1,6 @@
 <template>
   <div class="record">
-    
-    <h2>Input device: {{input_device}}</h2>
-    <h2 @click="reset()">Restart</h2>
+    <button @click="reset()">Restart</button>
 
     <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
@@ -15,16 +13,15 @@
     </div>
 
     <h2>Score: {{score}}</h2>
-
-    <h1 v-if="facit" @click="facit = false">Hide facit</h1>
-    <h1 v-if="!facit" @click="facit = true">Show facit</h1>
+    <div>
+      <button v-if="facit" @click="facit = false">Hide facit</button>
+      <button v-if="!facit" @click="facit = true">Show facit</button>
+    </div>
     <div v-if="facit" class="cwt">
       <template v-for="e in fevents">
         <Ditdah :key="e.id" :width="e.width + 'px'" :color="e.color"/>
       </template>
     </div>
-    
-
   </div>
 </template>
 
@@ -102,6 +99,9 @@ export default {
     score() {
       let t=0;
       let f=0;
+      if(this.events.length != this.fevents.length) {
+        return "N/A";
+      }
       for(let e of this.xev) {
         f+=e.diff*e.flen/100;
         t+=e.flen;
@@ -120,30 +120,28 @@ export default {
       EventBus.$emit('reset');
     },
     on(t) {
+      if(this.events.length == this.fevents.length) {
+        return;
+      }
       if(this.off_at != -1) {
         let len = (t-this.off_at)/this.dit_len;
         this.events.push({
           space: true,
           id: t,
-          color: 'white',
           len,
-          width: parseInt(len*10),          
         });
       }
       this.on_at = t;
     },
     off(t) {
-      let len = (t-this.on_at)/this.dit_len;
-      let color = 'green';
-      if(len > 3.1) {
-        color = 'red';
+      if(this.events.length == this.fevents.length) {
+        return;
       }
+      let len = (t-this.on_at)/this.dit_len;
       this.events.push({
         space: false,
         id: t,
-        color,
         len,
-        width: parseInt(len*10),
       });
       this.off_at = t;
     },
