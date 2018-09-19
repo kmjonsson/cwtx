@@ -56,7 +56,7 @@ let cw_map = {
                 "Ö": "---.",    
 }
 
-import Utils from '@/code/utils.js'
+// import Utils from '@/code/utils.js'
 
 class Morse {
     static text2morse(text) {
@@ -70,7 +70,7 @@ class Morse {
         return result;
     }
 
-    static morse2events(morse,wpm) {
+    static morse2events(morse) {
         let codes = morse.split("");
         let events = [];
         let id = 0;
@@ -128,14 +128,6 @@ class Morse {
         for(let i in m1) {
             if(m2[i] === undefined) {
                 break;
-                result.push({
-                    id: m1[i].id,
-                    space: m1[i].space,
-                    color: 'red',
-                    len: m1[i].len,
-                    diff: 100,
-                });
-                continue;
             }
             let rdiff = m1[i].len-m2[i].len;
             let rdiff2 = Math.abs((m1[i].len-m2[i].len)*100)/m1[i].len;

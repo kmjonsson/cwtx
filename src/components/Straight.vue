@@ -4,8 +4,6 @@
 
 <script>
 
-import EventBus from '@/code/eventbus.js'
-
 export default {
   name: 'straight',
   data () {

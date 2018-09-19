@@ -51,6 +51,7 @@ export default {
       dit_len: 0,
       facit: false,
       xev: [],
+      facit_events: []
     }
   },
   created () {
@@ -88,21 +89,13 @@ export default {
         return "Straight";
       }
     },
-    facit_events() {
-      let ev = Morse.compare(this.fevents,this.events);
-      for(let e of ev) {
-        e.width = e.len*10;
-      }
-      this.xev = ev;
-      return ev;
-    },
     score() {
       let t=0;
       let f=0;
       if(this.events.length != this.fevents.length) {
         return "N/A";
       }
-      for(let e of this.xev) {
+      for(let e of this.facit_events) {
         f+=e.diff*e.flen/100;
         t+=e.flen;
       }
@@ -110,6 +103,15 @@ export default {
         return "N/A";
       }
       return parseInt(100-(t-f)/t*100);
+    }
+  },
+  watch: {
+    events() {
+      let ev = Morse.compare(this.fevents,this.events);
+      for(let e of ev) {
+        e.width = e.len*10;
+      }
+      this.facit_events = ev;
     }
   },
   methods: {

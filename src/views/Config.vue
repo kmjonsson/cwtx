@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
   name: 'config',
   components: {
@@ -48,7 +46,7 @@ export default {
         return this.$store.state.text;
       },
       set(text) {
-        this.$store.commit('text', text);
+        this.$store.dispatch('text', text);
       }
     },
     wpm: {
@@ -56,7 +54,7 @@ export default {
         return this.$store.state.wpm;
       },
       set(wpm) {
-        this.$store.commit('wpm', parseInt(wpm));
+        this.$store.dispatch('wpm', parseInt(wpm));
       }
     },
     freq: {
@@ -64,7 +62,7 @@ export default {
         return this.$store.state.freq;
       },
       set(freq) {
-        this.$store.commit('freq', parseInt(freq));
+        this.$store.dispatch('freq', parseInt(freq));
       }
     },
     input_device() {
@@ -73,10 +71,10 @@ export default {
   },
   methods: {
     paddle() {
-      this.$store.commit('paddle');
+      this.$store.dispatch('paddle');
     },
     straight() {
-      this.$store.commit('straight');
+      this.$store.dispatch('straight');
     },
   }
 }
