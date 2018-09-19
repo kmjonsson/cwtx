@@ -79,7 +79,7 @@ export default {
       }
     },
     text() {
-      return this.$store.state.text;
+      return this.$store.state.text.toUpperCase();
     },
     input_device() {
       if(this.paddle) {
