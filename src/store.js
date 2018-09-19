@@ -36,7 +36,6 @@ export default new Vuex.Store({
     init({ commit }) {
       let new_state = JsCookies.getJSON('state');
       if(new_state !== undefined) {
-        console.log(new_state);
         commit('wpm',new_state.wpm);
         commit('text',new_state.text);
         commit('freq',new_state.freq);
