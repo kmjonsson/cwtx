@@ -140,9 +140,13 @@ class Morse {
             if(diff < 3) {
                 diff = 0;
             }
+            let pm = "-";
+            if(rdiff < 0) {
+                pm = "+";
+            }
             let desc = "";
             if(diff >= 3) {
-                desc = "off by " + diff + "%";
+                desc = "off by " + pm + diff + "%";
             }
             if(diff == 100) {
                 desc = "off by >" + diff + "%";

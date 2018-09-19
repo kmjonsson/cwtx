@@ -12,6 +12,7 @@ export default {
           AudioContext: window.AudioContext || window.webkitAudioContext,
           start_time: 0,
           output: undefined,
+          gainNode: undefined,
           is_down: false,
         };
   },
@@ -33,8 +34,14 @@ export default {
         up() {
                 let nowt = performance.now() / 1000;
                 if(!this.is_down) { return; }
-                this.is_down = false;                
-                this.output.stop(this.ctx.currentTime+0.5);
+                this.is_down = false;
+/*                let t = 0.1;
+                let n = 50;
+                for(let i=1;i<n;i++) {
+                        //console.log(1-i/n);
+                        this.gainNode.gain.setValueAtTime(1-i/n, this.ctx.currentTime+(t/n*i));
+                }*/
+                this.output.stop(this.ctx.currentTime);
                 this.$emit('off',nowt-this.start_time);
         },
         play() {                
@@ -43,8 +50,14 @@ export default {
                 let o = this.ctx.createBufferSource();
                 o.buffer = b;
                 o.start(this.ctx.currentTime);
-                o.connect(this.ctx.destination);
+                //o.connect(this.ctx.destination);
+
+                let gainNode = this.ctx.createGain();
+                gainNode.gain.value = 1;
+                o.connect(gainNode);
+                gainNode.connect(this.ctx.destination);
                 this.output = o;
+                this.gainNode = gainNode;
         },
         mouseDown(e) {                
                 if( e.button == 1 || e.button == 2 ) { 
