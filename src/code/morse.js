@@ -119,7 +119,6 @@ class Morse {
             }
         }
         events.pop();
-        console.log(events);
         return events;
     }
 

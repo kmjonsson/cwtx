@@ -40,6 +40,7 @@ export default {
                         if(this.dit && this.dah) { this.play_next=true; }
                         return;
                 }
+                // Kick new event
                 this.event(0);
         },        
         kick_timer(at) {
@@ -61,8 +62,6 @@ export default {
                 }
                 if(nowt == 0) {
                         nowt = performance.now()/1000-this.start_time;
-                } else {
-                        console.log((nowt-this.last_time) / this.dit_len());
                 }
                 if((this.dit && this.dah) || this.play_next) {
                         if(this.play_dah) {                                
@@ -83,7 +82,6 @@ export default {
                 }
                 this.play_next = false
                 if(this.dah) {
-                        this.last_time = nowt;
                         this.kick_timer(nowt+this.dit_len()*4);
                         this.$emit('on',nowt);
                         this.$emit('off',nowt+this.dit_len()*3);
@@ -92,7 +90,6 @@ export default {
                         return;
                 }
                 if(this.dit) {                        
-                        this.last_time = nowt;
                         this.kick_timer(nowt+this.dit_len()*2);
                         this.$emit('on',nowt);
                         this.$emit('off',nowt+this.dit_len());
