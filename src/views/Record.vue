@@ -2,7 +2,7 @@
   <div class="record">
     <button @click="reset()">Restart</button>
 
-    <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" />
+    <Paddle v-if="paddle" :freq=freq :wpm="wpm" v-on:on="on" v-on:off="off" :mode="mode" />
     <Straight v-if="!paddle" :freq=freq v-on:on="on" v-on:off="off" />
         
     <h1>{{text}}</h1>
