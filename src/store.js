@@ -11,6 +11,8 @@ export default new Vuex.Store({
     text: "CQ CQ CQ",
     wpm: 15,
     freq: 550,
+    dah_button: 1,
+    dit_button: 2,
   },
   mutations: {
     wpm(state,w) {
@@ -33,6 +35,12 @@ export default new Vuex.Store({
     },
     input_device(state,input_device) {
       state.input_device = input_device;
+    },
+    dah_button(state, button) {
+      state.dah_button = button;
+    },
+    dit_button(state, button) {
+      state.dit_button = button;
     }
   },
   actions: {
@@ -42,7 +50,9 @@ export default new Vuex.Store({
         commit('wpm',new_state.wpm);
         commit('text',new_state.text);
         commit('freq',new_state.freq);
-        commit('input_device',new_state.input_device);        
+        commit('input_device',new_state.input_device);
+        commit('dit_button',new_state.dit_button);
+        commit('dah_button',new_state.dah_button);
       }
     },
     save({ state }) {
@@ -51,6 +61,8 @@ export default new Vuex.Store({
           wpm: state.wpm,
           freq: state.freq,
           text: state.text,
+          dit_button: state.dit_button,
+          dah_button: state.dah_button,
         },{ expires: 7 })
     },
     wpm({ commit, dispatch },w) {
@@ -77,5 +89,13 @@ export default new Vuex.Store({
       commit('straight');
       dispatch('save');
     },    
+    dah_button({ commit, dispatch }, button) {
+      commit('dah_button', button);
+      dispatch('save');
+    },
+    dit_button({ commit, dispatch }, button) {
+      commit('dit_button', button);
+      dispatch('save');
+    },
   },
 })

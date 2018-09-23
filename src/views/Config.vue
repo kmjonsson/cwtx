@@ -15,6 +15,16 @@
     <h1>Freq (Hz)</h1>
     <input v-model="freq" placeholder="enter freq">
 
+    <h1>Dit Button</h1>
+    <div>
+      <span v-bind:class="{ active: dit_button_state == 0 }" @click="dit_button(0)">Left</span> - <span v-bind:class="{ active: dit_button_state == 1 }" @click="dit_button(1)">Middle</span> - <span v-bind:class="{ active: dit_button_state == 2 }" @click="dit_button(2)">Right</span>
+    </div>
+
+    <h1>Dah Button</h1>
+    <div>
+      <span v-bind:class="{ active: dah_button_state == 0 }" @click="dah_button(0)">Left</span> - <span v-bind:class="{ active: dah_button_state == 1 }" @click="dah_button(1)">Middle</span> - <span v-bind:class="{ active: dah_button_state == 2 }" @click="dah_button(2)">Right</span>
+    </div>
+
   </div>
 </template>
 
@@ -30,6 +40,12 @@ export default {
   created () {
   },
   computed: {
+    dit_button_state() {
+      return this.$store.state.dit_button;
+    },
+    dah_button_state() {
+      return this.$store.state.dah_button;
+    },
     paddle_colorA() {
       if(this.$store.state.input_device == 'paddleA') {
         return 'green';
@@ -83,10 +99,19 @@ export default {
     straight() {
       this.$store.dispatch('straight');
     },
+    dit_button(b) {
+      this.$store.dispatch('dit_button', b);
+    },
+    dah_button(b) {
+      this.$store.dispatch('dah_button', b);
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.active {
+  background-color: green;
+}
 </style>

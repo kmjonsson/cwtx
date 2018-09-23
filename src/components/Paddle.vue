@@ -114,13 +114,13 @@ export default {
                 o.connect(this.ctx.destination);
         },
         mouseDown(e) {                
-                if( e.button == 1 ) { 
+                if( e.button == this.$store.state.dit_button ) { 
                         this.dit = 1;
                         this.down();
                         e.preventDefault();
                         return false; 
                 }
-                if( e.button == 2 ) { 
+                if( e.button == this.$store.state.dah_button ) { 
                         this.dah=1;
                         this.down();
                         e.preventDefault();
@@ -129,12 +129,12 @@ export default {
                 return true;   
         },
         mouseUp(e) {
-                if( e.button == 1 ) { 
+                if( e.button == this.$store.state.dit_button ) { 
                         this.dit=0;
                         e.preventDefault();
                         return false; 
                 } 
-                if( e.button == 2 ) { 
+                if( e.button == this.$store.state.dah_button ) { 
                         this.dah=0;
                         e.preventDefault();
                         return false; 
