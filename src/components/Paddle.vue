@@ -147,12 +147,14 @@ export default {
                         this.dit = 1;
                         this.down();
                         e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 }
                 if( e.button == this.$store.state.dah_button ) { 
                         this.dah=1;
                         this.down();
                         e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 } 
                 return true;   
@@ -161,17 +163,27 @@ export default {
                 if( e.button == this.$store.state.dit_button ) { 
                         this.dit=0;
                         e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 } 
                 if( e.button == this.$store.state.dah_button ) { 
                         this.dah=0;
                         e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 } 
                 return true;  
         },
+        on_click(e) {
+                if(e.which == 2) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                }
+        },
         contextMenu(event) {
-                event.preventDefault()
+                event.preventDefault();
+                event.stopPropagation();
                 return false;
         },
         gen_sample(len) {
@@ -204,6 +216,7 @@ export default {
         document.removeEventListener('mousedown', this.mouseDown);
         document.removeEventListener('mouseup', this.mouseUp);
         document.removeEventListener('contextmenu', this.contextMenu);
+        document.removeEventListener('click', this.on_click);
         clearTimeout(this.timer);
   },
   mounted: function () {
@@ -214,6 +227,7 @@ export default {
         document.addEventListener('mousedown', this.mouseDown);
         document.addEventListener('mouseup', this.mouseUp);
         document.addEventListener('contextmenu', this.contextMenu);
+        document.addEventListener('click', this.on_click);
   }
 }
 </script>
