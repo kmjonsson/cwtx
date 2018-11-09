@@ -6,19 +6,29 @@
 
 import { EventBus } from '@/code/eventbus.js'
 
+const FLAGS = {
+        DIT: 0x01,
+        DAH: 0x02,
+        DITTING: 0x04,
+};
+
+const STATES = {
+        IDLE: 1,
+        CHK: 2,
+        KEYED: 3,
+        INTER_ELEMENT: 4,
+};
+
 export default {
   name: 'paddle',
   data () {
         return {
           ctx: undefined,
-          dit: 0,
-          dah: 0,
           AudioContext: window.AudioContext || window.webkitAudioContext,
-          play_next: false,
           timer: undefined,
-          play_dah: true,
           start_time: 0,
-          last_time: 0,
+          state: STATES.IDLE,
+          control: 0,
         };
   },
   props: {
@@ -27,22 +37,80 @@ export default {
         mode: { type: String, default: "B" },
   },
   computed: {
+          
   },
   created() {        
         EventBus.$on('reset', this.reset);
   },
   methods: {
         reset() {
+                this.state = STATES.IDLE;
+                this.control = 0;
                 this.start_time = 0;
-        },
-        down() {                
-                // I'm playing :-)
-                if(this.timer !== undefined) {
-                        if(this.dit && this.dah) { this.play_next=true; }
-                        return;
+                if(this.timer) {
+                        clearTimeout(this.timer);
+                        this.timer = undefined;
                 }
-                // Kick new event
-                this.event(0);
+        },
+        update_paddle() {
+                this.control |= ( (FLAGS.DIT * this.dit) | (FLAGS.DAH * this.dah) );
+        },
+        state_machine(nowt,end) {
+                if(this.state == STATES.IDLE) {
+                        this.update_paddle();
+                        if (this.control & (FLAGS.DIT | FLAGS.DAH)) {
+                                this.state = STATES.CHK;
+                        }
+                }
+                if(this.state == STATES.CHK) {
+                        end = false;
+                        this.state = STATES.KEYED;
+                        if (this.control & FLAGS.DIT) {
+                                // if dit was pressed
+                                this.play(nowt,1); // Play dit
+                                this.control |= FLAGS.DITTING;
+                                this.control &= ~(FLAGS.DIT + FLAGS.DAH);
+                        } else if (this.control & FLAGS.DAH) {
+                                // if dah was pressed
+                                this.play(nowt,3); // Play dah
+                                this.control &= ~(FLAGS.DIT + FLAGS.DAH);
+                        } else {
+                                // If no active key let's go idle :-)
+                                this.state = STATES.IDLE;
+                                return this.state_machine(nowt,end);
+                        }
+                }
+                if(this.state == STATES.KEYED) {
+                        if(end) {            // are we at end of key down ?
+                                end = false;
+                                this.kick_timer(nowt+this.dit_len());
+                                this.state = STATES.INTER_ELEMENT;
+                        }
+                        if (this.mode == 'B') {
+                                this.update_paddle();
+                        }
+                }
+                if(this.state == STATES.INTER_ELEMENT) {
+                        // Insert time between dits/dahs
+                        this.update_paddle();
+                        if (end) {
+                                if (this.control & FLAGS.DITTING) {                    // was it a dit or dah ?
+                                        this.control &= ~(FLAGS.DIT + FLAGS.DITTING);  // clear two bits
+                                        this.state = STATES.CHK;                       // dit done, check for dah
+                                } else {
+                                        this.control &= ~(FLAGS.DAH);                  // clear dah latch
+                                        this.state = STATES.IDLE;                      // go idle
+                                }
+                                return this.state_machine(nowt,false);
+                        }
+                }
+        },
+        down() {
+                if(this.start_time == 0) {
+                        this.start_time = performance.now()/1000;
+                }
+                let nowt = performance.now()/1000-this.start_time;
+                this.state_machine(nowt,false);
         },        
         kick_timer(at) {
                 this.next_event_at = at;
@@ -52,56 +120,17 @@ export default {
                 let nowt = performance.now()/1000-this.start_time;                
                 if(this.next_event_at-nowt <= 0.001) {
                         this.timer = undefined;
-                        return this.event(this.next_event_at);
+                        this.state_machine(this.next_event_at,true);
                 } else {
                         this.timer = setTimeout(this.timer_event,(this.next_event_at-nowt)*1000/2); 
                 }
         },
-        event(nowt) {
-                if(this.start_time == 0) {
-                        this.start_time = performance.now()/1000;
-                }
-                if(nowt == 0) {
-                        nowt = performance.now()/1000-this.start_time;
-                }
-                if((this.dit && this.dah) || (this.play_next && this.mode == 'B')) {
-                        if(this.play_dah) {                                
-                                this.kick_timer(nowt+this.dit_len()*4);
-                                this.$emit('on',nowt);
-                                this.$emit('off',nowt+this.dit_len()*3);
-                                this.play(false);                                                                
-                        } else {
-                                this.kick_timer(nowt+this.dit_len()*2);
-                                this.$emit('on',nowt);
-                                this.$emit('off',nowt+this.dit_len());
-                                this.play(true);                                
-                        }
-                        this.play_dah = !this.play_dah;
-                        this.play_next = false;
-                        if(this.dit && this.dah) { this.play_next=true; }
-                        return;
-                }
-                this.play_next = false
-                if(this.dah) {
-                        this.kick_timer(nowt+this.dit_len()*4);
-                        this.$emit('on',nowt);
-                        this.$emit('off',nowt+this.dit_len()*3);
-                        this.play(false);
-                        this.play_dah = false;
-                        return;
-                }
-                if(this.dit) {                        
-                        this.kick_timer(nowt+this.dit_len()*2);
-                        this.$emit('on',nowt);
-                        this.$emit('off',nowt+this.dit_len());
-                        this.play(true);
-                        this.play_dah = true;
-                        return;
-                }
-        },
-        play(dit) {
+        play(nowt,play) {
+                this.kick_timer(nowt+this.dit_len()*play);
+                this.$emit('on',nowt);
+                this.$emit('off',nowt+this.dit_len()*play);
                 let b;
-                if(dit) {
+                if(play == 1) {
                         b = this.ctx.createBuffer(1, this.dit_sample.length, this.ctx.sampleRate);
                         b.copyToChannel(new Float32Array(this.dit_sample),0,0);
                 } else {
