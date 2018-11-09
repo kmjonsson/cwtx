@@ -51,7 +51,8 @@ export default {
       dit_len: 0,
       facit: false,
       xev: [],
-      facit_events: []
+      facit_events: [],
+      last_events: [],
     }
   },
   created () {
@@ -127,11 +128,20 @@ export default {
   methods: {
     reset() {
       this.events=[];
+      this.last_events = [];
       this.on_at = -1;
       this.off_at = -1;
       EventBus.$emit('reset');
     },
     on(t) {
+      if(this.last_events.length >= 7) {
+        this.last_events.shift();
+        if(t-this.last_events[0] < this.dit_len * 7 * 2) {
+          this.reset();
+          return;
+        }
+      }
+      this.last_events.push(t);
       if(this.events.length == this.fevents.length) {
         return;
       }
@@ -146,6 +156,9 @@ export default {
       this.on_at = t;
     },
     off(t) {
+      if(this.on_at == -1) {
+        return;
+      }
       if(this.events.length == this.fevents.length) {
         return;
       }
