@@ -60,20 +60,29 @@ export default {
                 this.gainNode = gainNode;
         },
         mouseDown(e) {                
-                if( e.button == 1 || e.button == 2 ) { 
+                if( e.button == this.$store.state.dit_button ) { 
                         this.down();
                         e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 }
                 return true;   
         },
         mouseUp(e) {
-                if( e.button == 1 || e.button == 2 ) { 
+                if( e.button == this.$store.state.dit_button ) { 
                         this.up();
-                        e.preventDefault()
+                        e.preventDefault();
+                        e.stopPropagation();
                         return false; 
                 } 
                 return true;  
+        },
+        on_click(e) {
+                if(e.which == 2) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                }
         },
         contextMenu(event) {
                 event.preventDefault()
@@ -104,6 +113,7 @@ export default {
         document.removeEventListener('mousedown', this.mouseDown);
         document.removeEventListener('mouseup', this.mouseUp);
         document.removeEventListener('contextmenu', this.contextMenu);
+        document.removeEventListener('click', this.on_click);
         clearTimeout(this.timer);
   },
   mounted: function () {
@@ -113,6 +123,7 @@ export default {
         document.addEventListener('mousedown', this.mouseDown);
         document.addEventListener('mouseup', this.mouseUp);
         document.addEventListener('contextmenu', this.contextMenu);
+        document.addEventListener('click', this.on_click);
   }
 }
 </script>
