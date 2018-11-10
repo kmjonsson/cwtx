@@ -53,15 +53,7 @@ export default {
         text: { type: String }
   },
   created () {
-    this.dit_len = this.calc_dit_len()
-    this.fevents = Morse.morse2events(Morse.text2morse(this.text),this.wpm);    
-    for(let e of this.fevents) {
-      e.width = e.len*10;
-      e.color = 'green';
-      if(e.space) {
-        e.color = 'white';
-      }
-    }
+    this.reset();
   },
   computed: {
     wpm() {
@@ -103,6 +95,10 @@ export default {
       }
       this.facit_events = ev;
       this.$emit('score',this.score());
+    },
+    text() {
+      
+      this.reset();
     }
   },
   methods: {
@@ -126,6 +122,15 @@ export default {
       this.last_events = [];
       this.on_at = -1;
       this.off_at = -1;
+      this.dit_len = this.calc_dit_len()
+      this.fevents = Morse.morse2events(Morse.text2morse(this.text),this.wpm);    
+      for(let e of this.fevents) {
+        e.width = e.len*10;
+        e.color = 'green';
+        if(e.space) {
+          e.color = 'white';
+        }
+      }
       EventBus.$emit('reset');
     },
     on(t) {
@@ -175,6 +180,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .cwt {
-        height: 15px;
+        /* height: 15px; */
 }
 </style>
