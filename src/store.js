@@ -9,6 +9,7 @@ export default new Vuex.Store({
   state: {
     input_device: 'paddleB',
     text: "CQ CQ CQ",
+    call: "SK9HQ",
     wpm: 15,
     freq: 550,
     dah_button: 1,
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     text(state,t) {
       state.text = t;
+    },
+    call(state,t) {
+      state.call = t;
     },
     paddleA(state) {
       state.input_device = 'paddleA';
@@ -53,6 +57,7 @@ export default new Vuex.Store({
         commit('input_device',new_state.input_device);
         commit('dit_button',new_state.dit_button);
         commit('dah_button',new_state.dah_button);
+        commit('call',new_state.call);
       }
     },
     save({ state }) {
@@ -63,6 +68,7 @@ export default new Vuex.Store({
           text: state.text,
           dit_button: state.dit_button,
           dah_button: state.dah_button,
+          call: state.call,
         },{ expires: 7 })
     },
     wpm({ commit, dispatch },w) {
@@ -75,6 +81,10 @@ export default new Vuex.Store({
     },
     text({ commit, dispatch },t) {
       commit('text',t);
+      dispatch('save');
+    },
+    call({ commit, dispatch },t) {
+      commit('call',t);
       dispatch('save');
     },
     paddleA({ commit, dispatch }) {

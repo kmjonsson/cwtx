@@ -6,6 +6,9 @@
     <h2 v-bind:style="{ 'background-color': paddle_colorB }" @click="paddle('B')">Paddle Mode B</h2>
     <h2 v-bind:style="{ 'background-color': straight_color }" @click="straight()">Straight</h2>
 
+    <h1>Your Call</h1>
+    <input v-model="call" placeholder="Your call">
+
     <h1>Message</h1>
     <input v-model="text" placeholder="enter message">
 
@@ -15,7 +18,7 @@
     <h1>Freq (Hz)</h1>
     <input v-model="freq" placeholder="enter freq">
 
-    <h1>Dit Button</h1>
+    <h1>Dit Button, Straight</h1>
     <div>
       <span v-bind:class="{ active: dit_button_state == 0 }" @click="dit_button(0)">Left</span> - <span v-bind:class="{ active: dit_button_state == 1 }" @click="dit_button(1)">Middle</span> - <span v-bind:class="{ active: dit_button_state == 2 }" @click="dit_button(2)">Right</span>
     </div>
@@ -70,6 +73,14 @@ export default {
       },
       set(text) {
         this.$store.dispatch('text', text);
+      }
+    },
+    call: {
+      get() {
+        return this.$store.state.call;
+      },
+      set(text) {
+        this.$store.dispatch('call', text);
       }
     },
     wpm: {
