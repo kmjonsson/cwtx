@@ -5,6 +5,7 @@
 <script>
 
 import { EventBus } from '@/code/eventbus.js'
+import Morse from '@/code/morse.js'
 
 const FLAGS = {
         DIT: 0x01,
@@ -29,6 +30,7 @@ export default {
           start_time: 0,
           state: STATES.IDLE,
           control: 0,
+          ch: "",
         };
   },
   props: {
@@ -47,6 +49,7 @@ export default {
                 this.state = STATES.IDLE;
                 this.control = 0;
                 this.start_time = 0;
+                this.ch = "";
                 if(this.timer) {
                         clearTimeout(this.timer);
                         this.timer = undefined;
@@ -60,6 +63,8 @@ export default {
                         this.update_paddle();
                         if (this.control & (FLAGS.DIT | FLAGS.DAH)) {
                                 this.state = STATES.CHK;
+                        } else {
+                                this.ch = "";
                         }
                 }
                 if(this.state == STATES.CHK) {
@@ -133,9 +138,11 @@ export default {
                 if(play == 1) {
                         b = this.ctx.createBuffer(1, this.dit_sample.length, this.ctx.sampleRate);
                         b.copyToChannel(new Float32Array(this.dit_sample),0,0);
+                        this.ch += ".";
                 } else {
                         b = this.ctx.createBuffer(1, this.dah_sample.length, this.ctx.sampleRate);
                         b.copyToChannel(new Float32Array(this.dah_sample),0,0);
+                        this.ch += "-";
                 }
                 let o = this.ctx.createBufferSource();
                 o.buffer = b;
