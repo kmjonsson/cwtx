@@ -64,6 +64,7 @@ export default {
                         if (this.control & (FLAGS.DIT | FLAGS.DAH)) {
                                 this.state = STATES.CHK;
                         } else {
+                                console.log("-> " + this.ch + " is " + Morse.morse2text(this.ch));
                                 this.ch = "";
                         }
                 }
