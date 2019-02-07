@@ -70,6 +70,16 @@ class Morse {
         return result;
     }
 
+    static morse2text(morse) {
+        for(const [ch,mc] of Object.entries(cw_map)) {
+            //console.log(mc);
+            if(morse == mc) {
+                return ch;
+            }
+        }
+        return "#";
+    }
+
     static morse2events(morse) {
         let codes = morse.split("");
         let events = [];
